@@ -4,7 +4,7 @@ export const skill = new schema.Entity('skills');
 export const skills = [skill];
 
 export const usersSkill = new schema.Entity(
-  'usersskills',
+  'usersSkills',
   {
     skill
   },

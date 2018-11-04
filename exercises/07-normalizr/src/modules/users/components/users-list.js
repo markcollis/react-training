@@ -1,10 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-
-import UsersActions from 'modules/users/users-actions';
-import * as UsersSelectors from 'modules/users/users-selectors';
+import { inject, observer } from 'mobx-react';
 
 const UsersList = ({ users, addUser }) => (
   <div>
@@ -48,12 +45,9 @@ UsersList.propTypes = {
   addUser: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  users: UsersSelectors.getUsersList(state)
+const mapStoreToProps = ({ store }) => ({
+  users: store.usersList,
+  addUser: store.addUser,
 });
 
-const mapDispatchToProps = {
-  addUser: UsersActions.Creators.addUser
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UsersList);
+export default inject(mapStoreToProps)(observer(UsersList));
