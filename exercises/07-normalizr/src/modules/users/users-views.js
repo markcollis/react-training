@@ -17,17 +17,7 @@ const convertUser = flow([
 ]);
 
 export default self => ({
-  get title() {
-    return self.user.title;
-  },
-
-  get currentUsers() {
-    const { user: { userIds }, users } = self;
-    return userIds.map(userId => users[userId]);
-  },
-
   get usersList() {
-    const { currentUsers } = self;
-    return currentUsers.map(convertUser);
+    return self.user.users.map(convertUser);
   },
 });

@@ -1,21 +1,22 @@
 import { types } from 'mobx-state-tree';
 
 const Skill = types.model({
-	id: types.string,
+	id: types.identifier,
 	name: types.string,
 });
 
 const UsersSkill = types.model({
-	skill: types.string,
+	id: types.identifier,
+	skill: types.reference(Skill),
 	level: types.number,
 });
 
-const User = types.model({
-	id: types.string,
+export const User = types.model({
+	id: types.identifier,
 	firstName: types.string,
 	lastName: types.string,
 	regnalNumber: types.number,
-	skills: types.array(types.string)
+	skills: types.array(types.reference(UsersSkill))
 });
 
 const Store = types.model({

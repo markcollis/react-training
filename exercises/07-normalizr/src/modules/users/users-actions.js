@@ -13,7 +13,7 @@ export default self => ({
   getUsers: flow(function* () {
     try {
       const { data } = yield getUsers();
-      self.user.userIds = self.normalizeAndStore(data, users);
+      self.user.users = self.normalizeAndStore(data, users);
     } catch (error) {
       console.log(error.message);
     }

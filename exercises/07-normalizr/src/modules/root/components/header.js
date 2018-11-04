@@ -24,7 +24,7 @@ Header.propTypes = {
 };
 
 const mapStoreToProps = ({ store }) => ({
-  title: store.title
+  title: store.user.title
 });
 
 export default inject(mapStoreToProps)(observer(Header));
