@@ -6,10 +6,10 @@ export const USER_ROUTE_ID_PARAM = 'id';
 export default [
   {
     name: USERS_LIST,
-    path: '/'
+    path: '/',
   },
   {
     name: USER_DETAIL,
-    path: `users/:${USER_ROUTE_ID_PARAM}`
+    path: `users/:${USER_ROUTE_ID_PARAM}`,
   }
 ];

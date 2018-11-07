@@ -1,14 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-import { connect } from 'react-redux';
-
-import { Link } from '@salsita/react-router';
+import { inject, observer } from 'mobx-react';
+import { Link } from 'react-mobx-router5';
 
 import { USER_DETAIL } from 'modules/router/routes';
-
-import UsersActions from 'modules/users/users-actions';
-import * as UsersSelectors from 'modules/users/users-selectors';
 
 const UsersList = ({ users, addUser }) => (
   <div>
@@ -32,7 +27,7 @@ const UsersList = ({ users, addUser }) => (
         {users.map(({ id, firstName, lastName, regnalNumber }) => (
           <tr key={id}>
             <td>
-              <Link name={USER_DETAIL} params={{ id }}>
+              <Link routeName={USER_DETAIL} routeParams={{ id }} >
                 {firstName} {regnalNumber}
               </Link>
             </td>
@@ -56,12 +51,9 @@ UsersList.propTypes = {
   addUser: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  users: UsersSelectors.getUsersList(state)
+const mapStoreToProps = ({ store }) => ({
+  users: store.decoratedUsersList,
+  addUser: store.addUser,
 });
 
-const mapDispatchToProps = {
-  addUser: UsersActions.Creators.addUser
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UsersList);
+export default inject(mapStoreToProps)(observer(UsersList));

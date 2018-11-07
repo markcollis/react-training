@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { endsWithSegment } from 'router5-helpers';
+import { routeNode } from 'react-mobx-router5';
 
 import UsersList from 'modules/users/components/users-list';
 import UserDetail from 'modules/users/components/user-detail';
@@ -28,8 +28,4 @@ UsersRoute.propTypes = {
   }).isRequired
 };
 
-const mapStateToProps = state => ({
-  route: state.router.route
-});
-
-export default connect(mapStateToProps)(UsersRoute);
+export default routeNode('users')(UsersRoute);

@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { inject, observer } from 'mobx-react';
 
-import * as UsersSelectors from 'modules/users/users-selectors';
+import { modelOf } from 'modules/mobx-prop-types';
+import { UsersSkills } from 'modules/entities/entities-store';
 
 const UserDetail = ({ userDetail }) => {
   if (!userDetail) {
@@ -31,17 +32,12 @@ UserDetail.propTypes = {
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     regnalNumber: PropTypes.string.isRequired,
-    skills: PropTypes.arrayOf(PropTypes.shape({
-      skill: PropTypes.shape({
-        name: PropTypes.string.isRequired
-      }).isRequired,
-      level: PropTypes.number.isRequired
-    })).isRequired
+    skills: modelOf(UsersSkills).isRequired
   })
 };
 
-const mapStateToProps = state => ({
-  userDetail: UsersSelectors.getUserDetail(state)
+const mapStoreToProps = ({ store }) => ({
+  userDetail: store.decoratedUserDetail
 });
 
-export default connect(mapStateToProps)(UserDetail);
+export default inject(mapStoreToProps)(observer(UserDetail));

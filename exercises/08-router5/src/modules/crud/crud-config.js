@@ -1,5 +1,3 @@
-import { withRouterParams } from '@salsita/react-crud';
-
 import * as Entities from 'modules/crud/crud-entities';
 import * as Schema from 'modules/entities/entities-schema';
 import * as Routes from 'modules/router/routes';
@@ -48,9 +46,7 @@ export const mapRouteToFetchParams = route => {
         user: {
           effect: Effects.getUser,
           schema: Schema.user,
-          effectParamsFactory: withRouterParams(routeParams => [
-            routeParams[Routes.USER_ROUTE_ID_PARAM]
-          ])
+          effectParamsFactory: routeParams => [routeParams[Routes.USER_ROUTE_ID_PARAM]]
         }
       };
 

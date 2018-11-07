@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { connect } from 'react-redux';
-
-import * as UsersSelectors from 'modules/users/users-selectors';
+import { inject, observer } from 'mobx-react';
 
 const Header = ({ title }) => <h1>{title}</h1>;
 
@@ -25,8 +23,8 @@ Header.propTypes = {
   title: PropTypes.string.isRequired
 };
 
-const mapStateToProps = state => ({
-  title: UsersSelectors.getTitle(state)
+const mapStoreToProps = ({ store }) => ({
+  title: store.title
 });
 
-export default connect(mapStateToProps)(Header);
+export default inject(mapStoreToProps)(observer(Header));
