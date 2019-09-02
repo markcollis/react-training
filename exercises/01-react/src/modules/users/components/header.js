@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const Header = ({ title }) => <h1>{title}</h1>;
+const Header = ({ title }) => {
+  console.log('functional Header');
+  return <h1>{title}</h1>
+};
 
 // class Header extends React.Component {
 //   render() {
@@ -12,13 +15,13 @@ const Header = ({ title }) => <h1>{title}</h1>;
 
 // class Header extends React.PureComponent {
 //   render() {
-//     console.log('Header.render');
+//     console.log('Pure Header.render');
 //     return <h1>{this.props.title}</h1>;
 //   }
 // }
 
 Header.propTypes = {
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
 };
 
 export default Header;

@@ -1,7 +1,11 @@
-# Syllabus
-https://docs.google.com/presentation/d/1xaw0AXhimgnBBTctfTFHHIHddcI1RBUM0ITjexDiRRo
+# React Training Exercises
 
-# Exercises
+## Syllabus
+
+https://docs.google.com/presentation/d/1XelIKN7_CupR6LcOp3FJl_zewp16qGM6ovcl9cX61A8/
+
+## Exercises
+
 * [Exercise \#1](#exercise-1)
 * [Exercise \#2](#exercise-2)
 * [Exercise \#3](#exercise-3)
@@ -12,39 +16,69 @@ https://docs.google.com/presentation/d/1xaw0AXhimgnBBTctfTFHHIHddcI1RBUM0ITjexDi
 * [Exercise \#8](#exercise-8)
 * [Exercise \#9](#exercise-9)
 
+### Exercise \#1
 
-## Exercise \#1
-The main purpose of this exercise is to try [React](https://reactjs.org/docs/) and its [stateful components](https://reactjs.org/docs/react-component.html).
+The main purpose of this exercise is to try [React](https://reactjs.org/docs/) and its [stateless components](https://reactjs.org/docs/components-and-props.html#functional-and-class-components) and [stateful components](https://reactjs.org/docs/react-component.html).
 
 * Open the initial project `00-init`
 * Install all dependencies with `yarn` or `npm i`
-* Create two components (`Header` and `UsersList`) with [classes](https://reactjs.org/docs/react-component.html)
+* Create two stateless components (`Header` and `UsersList`) which will render data with [functions](https://reactjs.org/docs/components-and-props.html#functional-and-class-components)
+* Convert `Root` component into statefull component, which will hold the data and logic with [classes](https://reactjs.org/docs/react-component.html)
 
-### Header component
-Location: `src/modules/root/components/header.js`
+#### Header component
+
+Location: `src/modules/users/components/header.js`
 
 Props:
+
 ```ts
 {
   title: string
 }
 ```
 
-This is the simplest component created with a class. It just renders a heading (`h1`) with a string taken from the `title` property.
+This is the simplest component. It just renders a heading (`h1`) with a string taken from the `title` property.
 
-* Create a class named `Header` that extends [`React.Component`](https://reactjs.org/docs/react-component.html)
-* Implement [`render`](https://reactjs.org/docs/react-component.html#render) method to render the heading
-* Implement correct [`PropTypes`](https://reactjs.org/docs/typechecking-with-proptypes.html) in the `static propTypes` field
+* Create a function named `Header` that renders the heading. Heading comes from `title` property.
+* Implement correct [`PropTypes`](https://reactjs.org/docs/typechecking-with-proptypes.html) in the `Header.propTypes`
   * `PropTypes` are in a separate library called `prop-types` and can be imported as
+
     ```js
     import PropTypes from 'prop-types';
     ```
+
 * Use this component in the `Root` component
 
-### UsersList component
+#### UsersList component
+
 Location: `src/modules/users/components/users-list.js`
 
+Props:
+
+```ts
+{
+  users: Array<{
+    id: number,
+    firstName: string,
+    lastName: string
+  }>
+  addUser: ({ firstName: string, lastName: string }) => void
+  removeUser: (id: number) => void
+}
+```
+
+This component renders a list of the users from property `users` and two buttons to add two different users.
+
+* Create a function named `UsersList` that render two buttons and the list of users (or `No Users` when the list is empty)
+* The first button will add `Arya Stark` and the second one `Daenerys Targaryen`
+* For each user we render his/her name and button to delete that user (use `id` as key).
+
+#### Root component
+
+Location: `src/modules/root/components/root.js`
+
 State:
+
 ```ts
 {
   users: Array<{
@@ -55,94 +89,26 @@ State:
 }
 ```
 
-This component renders a list of the users saved in `this.state.users` and two buttons to add two different users.
+This component holds a list of the users in `this.state.users` and passes this list and handling functions into `UsersList` component.
 
-* Create a class named `UsersList` that extends `React.Component`
-* Implement `render` method to render two buttons and the list of users (or `No Users` when the list is empty)
-* The first button will add `Arya Stark` and the second one `Daenerys Targaryen`
-* Every user has `id` which should be unique within the list (we will not implement deleting users)
+* Create a class named `Users` that extends [`React.Component`](https://reactjs.org/docs/react-component.html)
+* Implement method on class that accepts first and last name of user, generates id and uses [`this.setState`](https://reactjs.org/docs/react-component.html#setstate) to add a user
+* Every user has `id` which should be unique within the list
+* Implement method on class that accepts id of user and uses [`this.setState`](https://reactjs.org/docs/react-component.html#setstate) to remove a user
+* Implement [`render`](https://reactjs.org/docs/react-component.html#render) method to render `Header` and `UsersList` component which accepts `users` list and `addUser` and `removeUser` methods
 * Create the initial state inside the [`constructor`](https://reactjs.org/docs/react-component.html#constructor) of this component
-* Use [`this.setState`](https://reactjs.org/docs/react-component.html#setstate) to add a user
 
+#### Additional task
 
-## Exercise \#2
-The main purpose of this exercise is to try [stateless components](https://reactjs.org/docs/components-and-props.html#functional-and-class-components).
-
-* Continue with your previous project or open `01-react-stateful`
-* Install all dependencies with `yarn` or `npm i` if you used `01-react-stateful`
-* Modify both components (`Header` and `UsersList`) and rewrite them into [functions](https://reactjs.org/docs/components-and-props.html#functional-and-class-components)
-
-### Header component
-Location: `src/modules/root/components/header.js`
-
-Props:
-```ts
-{
-  title: string
-}
-```
-
-This is the simplest component created with a function. The functionality is the same like in the previous exercise.
-
-* Modify the `Header` component previously created as a class into the component created as a function
-* Keep the same `PropTypes`
-
-### UsersList component
-Location: `src/modules/users/components/users-list.js`
-
-Props:
-```ts
-{
-  users: Array<{
-    id: number,
-    firstName: string,
-    lastName: string
-  }>,
-  addUser: ({ firstName: string, lastName: string }) => void
-}
-```
-
-The functionality is the same like in the previous exercise. The only difference is that the logic will be outside the file.
-
-* Modify the `UsersList` component into a function that renders users from the `users` property (or `No Users` when the list is empty)
-* Call the `addUser` function taken from the props when the user clicks on the button
-* Implement correct `PropTypes`
-
-### Index file
-Location: `src/index.js`
-
-Move logic from the old `UsersList` into the index file. All application data will be in a global object.
-
-* Create a global object called `state` with 2 fields (`title` and `users`)
-* Create your own function `render` that just calls [`ReactDOM.render`](https://reactjs.org/docs/react-dom.html#render) and uses data from the global object
-* Create a function called `addUser` that adds the user into the list of users and calls your `render` function
-  * Please prefer immutable change of the `state` object
-
-### Root component
-Location: `src/modules/root/components/root.js`
-
-Props:
-```ts
-{
-  title: string,
-  users: Array<{
-    id: number,
-    firstName: string,
-    lastName: string
-  }>,
-  addUser: ({ firstName: string, lastName: string }) => void
-}
-```
-
-Since we moved the logic into the index file and the `Root` component receives all necessary props, we need to send into `Header` and `UsersList`.
-
-### Additional task
 Try 3 different versions of the `Header` component and see when they get rendered
 
 1. Created as a class that extends [`React.Component`](https://reactjs.org/docs/react-api.html#reactcomponent)
 2. Created as a class that extends [`React.PureComponent`](https://reactjs.org/docs/react-api.html#reactpurecomponent)
 3. Created as a [function](https://reactjs.org/docs/components-and-props.html#functional-and-class-components)
 
+Do not render User data in list directly, but create separate component `User`, that will render data and delete button for particular user. (User list will now just render two add buttons and list of `User` components.)
+
+<!---
 
 ## Exercise \#3
 The main purpose of this exercise is to try [Redux](https://redux.js.org/).
