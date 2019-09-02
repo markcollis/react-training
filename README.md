@@ -108,32 +108,33 @@ Try 3 different versions of the `Header` component and see when they get rendere
 
 Do not render User data in list directly, but create separate component `User`, that will render data and delete button for particular user. (User list will now just render two add buttons and list of `User` components.)
 
-<!---
+### Exercise \#2
 
-## Exercise \#3
-The main purpose of this exercise is to try [Redux](https://redux.js.org/).
+The main purpose of this exercise is to try [Redux](https://redux.js.org/) and [`react-redux`](https://github.com/reactjs/react-redux) binding.
 
-* Continue with your previous project or open `02-react-stateless`
-* Install all dependencies with `yarn` or `npm i` if you used `02-react-stateless`, otherwise install just `redux`
-  * `yarn add redux`, or
-  * `npm i redux`
-* Move the logic into a reducer
+* Continue with your previous project or open `01-react`
+* Install all dependencies with `yarn` or `npm i` if you used `01-react`, otherwise install just `redux` and `react-redux`
+  * `yarn add redux react-redux`, or
+  * `npm i redux react-redux`
+* Use [`Provider`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#provider-store) from `react-redux` instead of the manual re-rendering
+* Move the logic into a reducer and write actions
+* Connect `Header` and `UsersList` with the [`connect`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) function from `react-redux`
 
-### UsersActions
+#### UsersActions
+
 Location: `src/modules/users/users-actions.js`
 
-This file defines actions and action types. The following structure is used in [`reduxsauce`](https://github.com/infinitered/reduxsauce) and we will use `reduxsauce` later in the training. Let's write the action types and action creators manually to know what is under the hood of `reduxsauce`.
+This file defines actions and action types. (Later in the training, once we learn Typescript, we will use [`typesafe-actions`](https://github.com/piotrwitek/typesafe-actions) which will make things easier.)
 
-* Create a constant ([action type](https://redux.js.org/basics/actions)) called `ADD_USER` with value `'ADD_USER'`
-* Create a function ([action creator](https://redux.js.org/basics/actions#action-creators)) called `addUser` that returns an object with `type` (action type) and `payload` (data)
-* Use `export default` to export an object with 2 fields
-  * `Types` - this is an object with all action types
-  * `Creators` - this is an object with all action creators
+* Create a constants ([action type](https://redux.js.org/basics/actions)) called `ADD_USER` with value `'ADD_USER'` and `REMOVE_USER` with value `'REMOVE_USER'`
+* Create a functions ([action creator](https://redux.js.org/basics/actions#action-creators)) called `addUser` that returns an object with `type` (action type of `ADD_USER`) and `payload` (data supplied to function). The same for `removeUser` (with `type` of `REMOVE_USER`).
 
-### usersReducer
+#### usersReducer
+
 Location: `src/modules/users/users-reducer.js`
 
 State:
+
 ```ts
 {
   title: string,
@@ -145,14 +146,16 @@ State:
 }
 ```
 
-The logic from `addUser` function from the previous exercise will be in this reducer.
+The logic (state and handling functions) from `Root` component from the previous exercise will be in this reducer.
 
 * Create a [reducer](https://redux.js.org/basics/reducers) function
 * Use an initial state
 * Modify `users` field in the state when the `ADD_USER` action is dispatched
+* Modify `users` field in the state when the `REMOVE_USER` action is dispatched
 * Don't forget to return unmodified state when a different action is dispatched
 
-### rootReducer
+#### rootReducer
+
 Location: `src/modules/root/root-reducer.js`
 
 This is the main reducer of the whole app. The main purpose is to combine all reducers from all modules into a single reducer.
@@ -160,7 +163,8 @@ This is the main reducer of the whole app. The main purpose is to combine all re
 * Import your `usersReducer`
 * Use [`combineReducers`](https://redux.js.org/api-reference/combinereducers) from `redux` to create the root reducer
 
-### Index file
+#### Index file
+
 Location: `src/index.js`
 
 Configure all necessary things for `redux`.
@@ -168,28 +172,17 @@ Configure all necessary things for `redux`.
 * Create `store` with the [`createStore`](https://redux.js.org/api-reference/createstore) function from `redux`
   * The first argument is `rootReducer`
   * The second argument can be an `enhancer`. Use the following to setup Redux devtools
+
     ```js
     window.__REDUX_DEVTOOLS_EXTENSION__
       ? window.__REDUX_DEVTOOLS_EXTENSION__()
       : v => v
     ```
-* Create a function called `dispatchAddUser` that calls [`store.dispatch`](https://redux.js.org/api-reference/store#dispatch(action)) to dispatch the `ADD_USER` action
-* Use data from [`store.getState()`](https://redux.js.org/api-reference/store#getstate()) in your `render` function
-* Subscribe your `render` function with [`store.subscribe`](https://redux.js.org/api-reference/store#subscribe(listener)) to re-render the app when an action is dispatched
 
+* Use [`Provider`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#provider-store) from `react-redux` to be able to connect components to store.
 
-## Exercise \#4
-The main purpose of this exercise is to try [`react-redux`](https://github.com/reactjs/react-redux) and [`reduxsauce`](https://github.com/infinitered/reduxsauce).
+#### Header component
 
-* Continue with your previous project or open `03-redux`
-* Install all dependencies with `yarn` or `npm i` if you used `03-redux`, otherwise install just `react-redux` and `reduxsauce`
-  * `yarn add react-redux reduxsauce`, or
-  * `npm i react-redux reduxsauce`
-* Use [`Provider`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#provider-store) from `react-redux` instead of the manual re-rendering
-* Connect `Header` and `UsersList` with the [`connect`](https://github.com/reactjs/react-redux/blob/master/docs/api.md#connectmapstatetoprops-mapdispatchtoprops-mergeprops-options) function from `react-redux`
-* Rewrite actions with `reduxsauce`
-
-### Header component
 Location: `src/modules/root/components/header.js`
 
 The same component with the same props like in the previous exercise.
@@ -197,51 +190,23 @@ The same component with the same props like in the previous exercise.
 * Use `connect` from `react-redux` to create the connected version of this component
 * Set `title` inside `mapStateToProps`
 
-### UsersList component
+#### UsersList component
+
 Location: `src/modules/users/components/users-list.js`
 
 The same component with the same props like in the previous exercise.
 
 * Use `connect` from `react-redux` to create the connected version of this component
 * Set `users` inside `mapStateToProps`
-* Set `addUser` inside `mapDispatchToProps`
+* Set `addUser` and `removeUser` inside `mapDispatchToProps`
 
-### Root component
+#### Root component
+
 Location: `src/modules/root/components/root.js`
 
-Props:
-```ts
-{
-}
-```
+* Remove all props and just render bare `Header` and `UsersList` because both components are connected now and will receive props directly from store.
 
-* Remove all props because both components are connected now.
-
-### UsersActions
-Location: `src/modules/users/users-actions.js`
-
-The same actions but created with `reduxsauce`.
-
-* Use [`createActions`](https://github.com/infinitered/reduxsauce#createactions) from `reduxsauce` to create the `ADD_USER` action with `addUser` action creator
-* Use `users/` prefix
-
-### usersReducer
-Location: `src/modules/users/users-reducer.js`
-
-The same reducer but created with `reduxsauce`.
-
-* Use [`createReducer`](https://github.com/infinitered/reduxsauce#createreducer) from `reduxsauce` to create the same reducer
-
-### Index file
-Location: `src/index.js`
-
-Currently, we need only `store` and we need to call `ReactDOM.render` directly with `Provider` component.
-
-* Remove own `render` function and directly call `ReactDOM.render`
-* Change the rendered component into `Provider` and put `Root` as its child
-* Remove `dispatchAddUser` (the action is dispatched in the `UsersList` component)
-* Remove `store.subscribe` (it is not necessary with `Provider`)
-
+<!---
 
 ## Exercise \#5
 The main purpose of this exercise is to try [Reselect](https://github.com/reactjs/reselect).
