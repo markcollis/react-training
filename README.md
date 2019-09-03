@@ -9,12 +9,6 @@ https://docs.google.com/presentation/d/1XelIKN7_CupR6LcOp3FJl_zewp16qGM6ovcl9cX6
 * [Exercise \#1](#exercise-1)
 * [Exercise \#2](#exercise-2)
 * [Exercise \#3](#exercise-3)
-* [Exercise \#4](#exercise-4)
-* [Exercise \#5](#exercise-5)
-* [Exercise \#6](#exercise-6)
-* [Exercise \#7](#exercise-7)
-* [Exercise \#8](#exercise-8)
-* [Exercise \#9](#exercise-9)
 
 ### Exercise \#1
 
@@ -205,6 +199,113 @@ The same component with the same props like in the previous exercise.
 Location: `src/modules/root/components/root.js`
 
 * Remove all props and just render bare `Header` and `UsersList` because both components are connected now and will receive props directly from store.
+
+### Exercise \#3
+
+The main purpose of this exercise is to try [TypeScript](https://www.typescriptlang.org/docs/handbook/basic-types.html) and [`typesafe-actions`](https://github.com/piotrwitek/typesafe-actions).
+
+* Continue with your previous project or open `02-redux`
+* Install all dependencies with `yarn` or `npm i` if you used `02-redux`, otherwise install `typescript`, `typesafe-actions`, `@types/jest`, `@types/node`, `@types/react`, `@types/react-dom` and `@types/react-redux`
+  * `yarn add typescript typesafe-actions @types/jest @types/node @types/react @types/react-dom @types/react-redux`, or
+  * `npm i typescript typesafe-actions @types/jest @types/node @types/react @types/react-dom @types/react-redux`
+* Rename all files to end with `ts` or `tsx`
+* Rewrite action creators to use `typesafe-actions` and reducers to check with utils from `typesafe-actions`
+* Add types to Components
+
+#### UsersTypes
+
+Location: `src/modules/users/types.ts`
+
+Put here definition of types and interfaces used in users module
+
+* Create type `UserId` which is alias to number type
+* Create interface `UserWithoutId` which will contain string fields `firstName` and `lastName`
+* Create interface `User` which will extend `UserWithoutId` and will add `id` field of `UserId` type
+
+#### UsersActions
+
+Location: `src/modules/users/users-actions.ts`
+
+Redefine actions with `typesafe-actions`
+
+* Delete constants
+* Refactor `addUser` action creator to use [`createStandardAction`](https://github.com/piotrwitek/typesafe-actions#2-fsa-compliant-actions) and `UserWithoutId` type
+* Refactor `removeUser` action creator to use `createStandardAction` and `UserId` type
+* Export these action creators as one object named `Creators`
+* Export `Action` type defined as type of `Creators` object.
+
+#### RootActions
+
+Location: `src/modules/root/root-actions.ts`
+
+Create top level actions object and type covering all possible actions in app
+
+* Export `Actions` object which will have property `Users` with all actions from `users-actions.ts`
+* Export `Action` type defined as type of all possible actions.
+
+#### usersReducer
+
+Location: `src/modules/users/users-reducer.ts`
+
+Add types
+
+* Create interface `UserState` describing users state (use `User` type from `types.ts`)
+* Type reducer function to use `Reducer` type from `redux`, state type will be `UserState` and action type `Action` from `root-actions.ts`
+* rewrite switch cases to use [`getType`](https://github.com/piotrwitek/typesafe-actions#alternative-usage-with-regular-switch-reducer) from `typesafe-actions`
+
+#### rootReducer
+
+Location: `src/modules/root/root-reducer.ts`
+
+Add types
+
+* Create interface `IState` with `users` field of type `UserState`
+* Add type hint to `combineReducers`
+
+#### Header component
+
+Location: `src/modules/root/components/header.tsx`
+
+Add types
+
+* Define `HeaderStoreProps` interface with `title` field of type `string`
+* Define `HeaderProps` type as alias to `HeaderStoreProps`
+* Type `Header` component as functional component with `HeaderProps` props
+* Type `mapStateToProps` param and return value
+
+#### UsersList component
+
+Location: `src/modules/users/components/users-list.tsx`
+
+Add types
+
+* Define `UsersListStoreProps` interface with `users` field as array of type `User`
+* Define `UsersListDispatchProps` interface with `addUser` and `removeUser` fields
+* Define `UsersListProps` type as union of `UsersListStoreProps` and `UsersListDispatchProps`
+* Type `UsersList` component as functional component with `UsersListProps` props
+* Type `mapStateToProps` param and return value
+
+#### Index file
+
+Location: `src/index.tsx`
+
+You need to hack global `Window` interface to be able to work with `__REDUX_DEVTOOLS_EXTENSION__`
+
+* Just add
+
+  ```ts
+  declare global {
+    interface Window {
+      __REDUX_DEVTOOLS_EXTENSION__: any
+    }
+  }
+  ```
+
+  after imports
+
+#### Optionally
+
+If you have created `users.js` file, add types also to this component
 
 <!---
 
