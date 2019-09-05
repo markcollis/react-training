@@ -10,6 +10,7 @@ https://docs.google.com/presentation/d/1XelIKN7_CupR6LcOp3FJl_zewp16qGM6ovcl9cX6
 * [Exercise \#2](#exercise-2)
 * [Exercise \#3](#exercise-3)
 * [Exercise \#4](#exercise-4)
+* [Exercise \#5](#exercise-5)
 
 ### Exercise \#1
 
@@ -416,7 +417,7 @@ This component will be sign-post for top level routes.
 * Check for active route should be exhaustive, using `UnreachableCaseError`
 * Wrap exported `Root` component with `withRoute`
 
-### Header component
+#### Header component
 
 Location: `src/modules/root/components/header.tsx`
 
@@ -424,7 +425,7 @@ The same component with the same props like in the previous exercise.
 
 * Use the `getTitle` selector in `mapStateToProps`
 
-### UsersList component
+#### UsersList component
 
 Location: `src/modules/users/components/users-list.tsx`
 
@@ -432,7 +433,7 @@ The same component with the same props like in the previous exercise.
 
 * Use the `getUsersList` selector in `mapStateToProps`
 
-### UserDeatil component
+#### UserDeatil component
 
 Location: `src/modules/users/components/user-detail.tsx`
 
@@ -443,6 +444,45 @@ Component renders details of accessed user
 * Component will render [`Link`](https://router5.js.org/integration/with-react#link-components) back to list of users and user details (`Not Found` if id in URL is invalid and user is not found in data)
 * Component is wrapped with `withRoute` and `connect` HOCs
 * Component will use selector created with `createGetUser` and as second parameter will use value of `userIdParam` read from active route
+
+### Exercise \#5
+
+The main purpose of this exercise is to try [`redux-observable`](https://redux-observable.js.org/) and [`io-ts`](https://github.com/gcanti/io-ts)
+
+* Continue with your previous project or open `04-reselect-router5`
+* Install all dependencies with `yarn` or `npm i` if you used `04-reselect-router5`, otherwise install the following dependencies
+  * with `yarn`
+    * `yarn add rxjs redux-observable io-ts fp-ts`
+    * `yarn add -D concurrently nodemon koa`
+  * or with `npm`
+    * `npm i rxjs redux-observable io-ts fp-ts`
+    * `npm i -D concurrently nodemon koa`
+* Create a simple server that allows you to add a new user and get all users
+* Create sagas that handle communication with the server
+
+#### package.json
+
+Location: `package.json`
+
+* Change the `start` script into the following
+  * if you use `yarn`
+
+    ```json
+    "start": "concurrently \"yarn start-fe\" \"yarn start-be\"",
+    "start-fe": "react-scripts start",
+    "start-be": "nodemon src/server.js",
+    ```
+
+  * or if you use `npm`
+
+    ```json
+    "start": "concurrently \"npm run start-fe\" \"npm run start-be\"",
+    "start-fe": "react-scripts start",
+    "start-be": "nodemon src/server.js",
+    ```
+
+* Add `proxy` into the root to correctly handle CORS
+  * `"proxy": "http://localhost:3001"`
 
 <!---
 ## Exercise \#6
