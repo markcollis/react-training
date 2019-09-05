@@ -2,13 +2,13 @@ import React from 'react'
 import { connect } from 'react-redux'
 
 import { Actions } from 'modules/root/root-actions'
-import { User as UserType } from '../types'
-
-import User from './users-list-item'
 import { IState } from 'modules/root/root-reducer'
+import { getUsersList } from '../users-selectors'
+
+import UserListItem from './users-list-item'
 
 interface UsersListStoreProps {
-  users: UserType[]
+  users: ReturnType<typeof getUsersList>
 }
 
 interface UsersListDispatchProps {
@@ -33,7 +33,7 @@ const UsersList: React.FC<UsersListProps> = ({ users, addUser, removeUser }) => 
         : (
           <ul>
             {users.map(user => (
-              <li key={user.id}><User user={user} removeUser={removeUser} /></li>
+              <li key={user.id}><UserListItem user={user} removeUser={removeUser} /></li>
             ))}
           </ul>
         )
@@ -43,7 +43,7 @@ const UsersList: React.FC<UsersListProps> = ({ users, addUser, removeUser }) => 
 }
 
 const mapStateToProps = (state: IState): UsersListStoreProps => ({
-  users: state.users.users,
+  users: getUsersList(state),
 })
 
 const mapDispatchToProps = {

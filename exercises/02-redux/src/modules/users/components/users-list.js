@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import * as UsersActions from 'modules/users/users-actions';
-import User, { UserShape } from './user';
+import User, { UserShape } from './users-list-item';
 
 const UsersList = ({ users, addUser, removeUser }) => {
   const addAryaStark = () => addUser({ firstName: 'Arya', lastName: 'Stark' });

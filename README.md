@@ -9,6 +9,7 @@ https://docs.google.com/presentation/d/1XelIKN7_CupR6LcOp3FJl_zewp16qGM6ovcl9cX6
 * [Exercise \#1](#exercise-1)
 * [Exercise \#2](#exercise-2)
 * [Exercise \#3](#exercise-3)
+* [Exercise \#4](#exercise-4)
 
 ### Exercise \#1
 
@@ -305,21 +306,84 @@ You need to hack global `Window` interface to be able to work with `__REDUX_DEVT
 
 #### Optionally
 
-If you have created `users.js` file, add types also to this component
+If you have created `users.ts` file, add types also to this component
 
-<!---
+### Exercise \#4
 
-## Exercise \#5
-The main purpose of this exercise is to try [Reselect](https://github.com/reactjs/reselect).
+The main purpose of this exercise is to try [Reselect](https://github.com/reactjs/reselect) and [`router5`](http://router5.github.io/).
 
-* Continue with your previous project or open `04-react-redux`
-* Install all dependencies with `yarn` or `npm i` if you used `04-react-redux`, otherwise install just `reselect`
-  * `yarn add reselect`, or
-  * `npm i reselect`
-* Create selectors and use them in `Header` and `UsersList`
+* Continue with your previous project or open `03-ts`
+* Install all dependencies with `yarn` or `npm i` if you used `03-ts`, otherwise install just `reselect`, `router5`, `react-router5` and `router5-plugin-browser`
+  * `yarn add reselect router5 react-router5 router5-plugin-browser`, or
+  * `npm i reselect router5 react-router5 router5-plugin-browser`
+* Create separate pages for users list, new user and user detail
+* Create selectors and use them in `UsersList` and `UserDetail`
+
+### UnreachableCaseError
+
+Location: `src/utils/UnreachableCaseError.ts`
+
+Error for describing states that can't occur thanks to TypeScript
+
+* Create an class `UnreachableCaseError` extending Error which will accept argument `val` of type `never` and calls parent constructor with message `Unreachable case: ${JSON.stringify(val)}`
+
+### RootRouteTypes
+
+Location: `src/modules/root/router/root-route-types.ts`
+
+Lists possible top level routes
+
+* Create enumerator `RouteName` with just one field `Users`
+
+### UserRouteTypes
+
+Location: `src/modules/users/router/users-route-types.ts`
+
+Lists possible top users routes
+
+* Create enumerator `UserRouteName` with two field `List` and `Detail`
+* Create constant `userIdParam`
+
+### UsersRoutes
+
+Location: `src/modules/users/router/users-routes.ts`
+
+Define possible users [routes](https://router5.js.org/guides/defining-routes)
+
+* Create constant `usersRoutes: Route[]` with two items
+  * First item with name `UserRouteName.List`, path `/`,
+  * Second item with name `UserRouteName.Detail`, path `/` with parameter named `userIdParam`,
+* Export constant `usersDefaultRoute` which will be full route name of `UserRouteName.List`
+
+### RootRoutes
+
+Location: `src/modules/root/router/root-routes.ts`
+
+Define possible root routes
+
+* Create constant `routes: Route[]` with just one route with name `RouteName.Users`, path `/users`, children of user routes and `forwardTo` param with which will be full route name of `UserRouteName.List`
+
+### Router
+
+Location: `src/modules/root/router/index.ts`
+
+Define router instance
+
+* [Create router](https://router5.js.org/api-reference#createrouter) instance named `router` using root routes, `defaultRoute` option should be value of `RouteName.Users`
+* Add `router5-plugin-browser` to browser
+
+#### Index file
+
+Location: `src/index.tsx`
+
+Configure all necessary things for `router5`.
+
+* Render app after router starts
+* Use [`RouterProvider`](https://router5.js.org/integration/with-react#provider) to be able to use HOCs to get current route
 
 ### UsersSelectors
-Location: `src/modules/users/users-selectors.js`
+
+Location: `src/modules/users/users-selectors.ts`
 
 * Create a selector called `getTitle` with [`createSelector`](https://github.com/reactjs/reselect#createselectorinputselectors--inputselectors-resultfunc) from `reselect`
   * This selector just returns the `title` string from the `state`
@@ -327,22 +391,60 @@ Location: `src/modules/users/users-selectors.js`
   * This selector just returns the `users` array from the `state`
 * Create a selector called `getUsersList` with `createSelector`
   * This selector uses the `getUsers` selector and modifies last names to upper case
+* Create a selector creator called `createGetUser` with `createSelector`
+  * This selector uses the `getUsers` selector and accepts second parameter of `userId: UserId` and returns user with that id
+
+#### UsersRoute component
+
+Location: `src/modules/users/components/users-route.tsx`
+
+This component will be sign-post for users routes.
+
+* Create functional component `UsersRoute` with `RouteContext` params from `react-router5/types/types`.
+* It will render `Header` and `UsersList` or `UserDetail` (will create later) based on active route (`route.name.split('.')[1]`)
+* Check for active route should be exhaustive, using `UnreachableCaseError`
+* Wrap exported `UsersRoute` component with [`withRoute`](https://router5.js.org/integration/with-react#connecting-components) HOC
+
+#### Root component
+
+Location: `src/modules/root/components/root.tsx`
+
+This component will be sign-post for top level routes.
+
+* `Root` component now accepts `RouteContext` props
+* It will render `UsersRoute` based on active route (`route.name.split('.')[0]`)
+* Check for active route should be exhaustive, using `UnreachableCaseError`
+* Wrap exported `Root` component with `withRoute`
 
 ### Header component
-Location: `src/modules/root/components/header.js`
+
+Location: `src/modules/root/components/header.tsx`
 
 The same component with the same props like in the previous exercise.
 
 * Use the `getTitle` selector in `mapStateToProps`
 
 ### UsersList component
-Location: `src/modules/users/components/users-list.js`
+
+Location: `src/modules/users/components/users-list.tsx`
 
 The same component with the same props like in the previous exercise.
 
 * Use the `getUsersList` selector in `mapStateToProps`
 
+### UserDeatil component
 
+Location: `src/modules/users/components/user-detail.tsx`
+
+Component renders details of accessed user
+
+* Create interface `UserDetailStoreProps` with `user` field, which is optional and of type `User`
+* Create functional component `UserDetail` accepting `UserDetailProps`
+* Component will render [`Link`](https://router5.js.org/integration/with-react#link-components) back to list of users and user details (`Not Found` if id in URL is invalid and user is not found in data)
+* Component is wrapped with `withRoute` and `connect` HOCs
+* Component will use selector created with `createGetUser` and as second parameter will use value of `userIdParam` read from active route
+
+<!---
 ## Exercise \#6
 The main purpose of this exercise is to try [Redux-Saga](https://redux-saga.js.org/), [`axios`](https://github.com/axios/axios), and [Express](http://expressjs.com/).
 

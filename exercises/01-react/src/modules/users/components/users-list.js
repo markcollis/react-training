@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import User, { UserShape } from './user';
+import User, { UserShape } from './users-list-item';
 
 const UsersList = ({ users, addUser, removeUser }) => {
   const addAryaStark = () => addUser({ firstName: 'Arya', lastName: 'Stark' });
