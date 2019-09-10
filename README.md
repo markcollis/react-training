@@ -214,6 +214,41 @@ The main purpose of this exercise is to try [TypeScript](https://www.typescriptl
 * Rewrite action creators to use `typesafe-actions` and reducers to check with utils from `typesafe-actions`
 * Add types to Components
 
+#### tsconfig.json
+
+Create `tsconfig.json` file with following content
+
+```json
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react",
+    "baseUrl": "src",
+    "strictFunctionTypes": true,
+    "noUnusedLocals": true
+  },
+  "include": [
+    "src"
+  ]
+}
+```
+
 #### UsersTypes
 
 Location: `src/modules/users/types.ts`
