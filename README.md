@@ -488,10 +488,10 @@ The main purpose of this exercise is to try [`redux-observable`](https://redux-o
 * Install all dependencies with `yarn` or `npm i` if you used `04-reselect-router5`, otherwise install the following dependencies
   * with `yarn`
     * `yarn add rxjs redux-observable io-ts fp-ts`
-    * `yarn add -D concurrently nodemon koa`
+    * `yarn add -D concurrently nodemon koa koa-bodyparser koa-router ts-node @types/koa @types/koa-bodyparser @types/koa-router`
   * or with `npm`
     * `npm i rxjs redux-observable io-ts fp-ts`
-    * `npm i -D concurrently nodemon koa`
+    * `npm i -D concurrently nodemon koa koa-bodyparser koa-router ts-node @types/koa @types/koa-bodyparser @types/koa-router`
 * Create a simple server that allows you to add a new user and get all users
 * Create sagas that handle communication with the server
 
@@ -505,7 +505,7 @@ Location: `package.json`
     ```json
     "start": "concurrently \"yarn start-fe\" \"yarn start-be\"",
     "start-fe": "react-scripts start",
-    "start-be": "nodemon src/server.js",
+    "start-be": "nodemon --project=tsconfig-server.json server.ts",
     ```
 
   * or if you use `npm`
@@ -513,132 +513,181 @@ Location: `package.json`
     ```json
     "start": "concurrently \"npm run start-fe\" \"npm run start-be\"",
     "start-fe": "react-scripts start",
-    "start-be": "nodemon src/server.js",
+    "start-be": "nodemon --project=tsconfig-server.json server.ts",
     ```
 
-* Add `proxy` into the root to correctly handle CORS
+* Add `proxy` into the root to correctly pass requests to our server
   * `"proxy": "http://localhost:3001"`
 
-<!---
-## Exercise \#6
-The main purpose of this exercise is to try [Redux-Saga](https://redux-saga.js.org/), [`axios`](https://github.com/axios/axios), and [Express](http://expressjs.com/).
+#### tsconfig-server.json
 
-* Continue with your previous project or open `05-reselect`
-* Install all dependencies with `yarn` or `npm i` if you used `05-reselect`, otherwise install the following dependencies
-  * with `yarn`
-    * `yarn add axios body-parser express redux-saga`
-    * `yarn add -D concurrently nodemon`
-  * or with `npm`
-    * `npm i axios body-parser express redux-saga`
-    * `npm i -D concurrently nodemon`
-* Create a simple server that allows you to add a new user and get all users
-* Move the logic of adding a new user to the server
-* Create sagas that handle communication with the server
+Location: `tsconfig-server.json`
 
-### package.json
-Location: `package.json`
+```json
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": "src",
+    "strictFunctionTypes": true,
+    "noUnusedLocals": true
+  },
+  "include": [
+    "src"
+  ]
+}
+```
 
-* Change the `start` script into the following
-  * if you use `yarn`
-    ```json
-    "start": "concurrently \"yarn start-fe\" \"yarn start-be\"",
-    "start-fe": "react-scripts start",
-    "start-be": "nodemon src/server.js",
-    ```
-  * or if you use `npm`
-    ```json
-    "start": "concurrently \"npm run start-fe\" \"npm run start-be\"",
-    "start-fe": "react-scripts start",
-    "start-be": "nodemon src/server.js",
-    ```
-* Add `proxy` into the root to correctly handle CORS
-  * `"proxy": "http://localhost:3001"`
+#### Server
 
-### Server file
-Location: `src/server.js`
+Location: `server.ts`
 
-A simple `express` server that has 2 routes `GET /users` and `POST /users`.
+```ts
+import Koa = require('koa')
+import bodyParser = require('koa-bodyparser')
+import Router = require('koa-router')
 
-* Create a [server with `express`](http://expressjs.com/en/4x/api.html#app) and use [`body-parser`](https://github.com/expressjs/body-parser#expressconnect-top-level-generic) middleware (`bodyParser.json()`)
-* Create the route `GET /users` that returns all users from the user list
-  * Users can be stored in an array
-* Create the route `POST /users` that
-  * generates a new `id`
-  * adds a new user into the user list (`firstName` and `lastName` can be taken from `req.body`)
-  * returns the new user (`id` is included)
+const PORT = 3001
 
-### API Client
-Location: `src/modules/api/api-client.js`
+let nextId = 1
+let users: any[] = []
 
-This file contains an API client with `axios` that is used to make requests to the BE server.
+const app = new Koa()
+app.use(bodyParser())
 
-* Use [`axios.create`](https://github.com/axios/axios#creating-an-instance) to create the client
-* Set `baseURL: 'http://localhost:3000'` in the config
+const router = new Router()
 
-### UsersEffects
-Location: `src/modules/users/users-effects.js`
+router.get('/users', (ctx) => {
+  ctx.body = users
+})
 
-This file defines all effect functions that perform the corresponding requests to API. We need only 2 effects right now - `getUsers` and `addUser`.
+router.post('/users', (ctx) => {
+  const { firstName, lastName } = ctx.request.body
+  const user = {
+    id: nextId++,
+    firstName,
+    lastName
+  }
 
-* Create a function `getUsers` that makes a request to `GET /users`
-* Create a function `addUser` that makes a request to `POST /users` and sends an object with `firstName` and `lastName` in the request body
+  users.push(user)
+  ctx.body = user
+})
 
-### UsersActions
-Location: `src/modules/users/users-actions.js`
+router.delete('/users/:id', (ctx) => {
+  const { id } = ctx.params
+  const user = users.find((u) => u.id === id)
+  if (user) {
+    users = users.filter((u) => u.id !== id)
+    ctx.body = user
+  }
+})
 
-We will need a new action to store fetched users into to the state.
+app
+  .use(router.routes())
+  .use(router.allowedMethods())
 
-* Create a new action called `USERS_LOADED`
+app.listen(PORT, () => console.log(`The server is running on port ${PORT}!`))
+```
 
-### usersReducer
-Location: `src/modules/users/users-reducer.js`
+#### validation
 
-Users are added on the BE side so the handler for the `ADD_USER` action is not necessary anymore. However, we need to handle the new `usersLoaded` action.
+Location: `src/utils/validation.ts`
 
-* Remove the `ADD_USER` action handler
-* Add a handler for `USERS_LOADED`
+Create function validating data using `io-ts` library
 
-### usersSaga
-Location: `src/modules/users/users-saga.js`
+* Create and export function that takes [`io-ts.Type`](https://github.com/gcanti/io-ts#custom-types) and returns function that [validates](https://github.com/gcanti/io-ts#error-reporters) data received as function argument. Function should unsure that returned data are of correct type or throw error.
 
-This file is used to create [redux sagas](https://redux-saga.js.org/docs/api/) that handle side effects to communicate with the BE server. We need 2 sagas to handle all API effects we have - `getUsers` and `addUser`.
+#### UsersActions
 
-* Create a saga called `getUsers` that
-  * calls `UsersEffects.getUsers`
-  * dispatch the `USERS_LOADED` action with `data` taken from the response
-* Create a saga called `addUser` that
-  * calls `UsersEffects.addUser`
-  * runs the `getUsers` saga to refresh the user list
-* Don't forget to use `try/catch` in both sagas
-* Create a saga called `usersSaga` (only this one needs to be exported - with `export default`) that
-  * runs the `getUsers` saga immediately (we don't have a router currently)
-  * runs the `addUser` saga when the `ADD_USER` action is dispatched (hint: use `takeEvery`)
+Location: `src/modules/users/users-actions.ts`
 
-### rootSaga
-Location: `src/modules/root/root-saga.js`
+Use async actions
 
-This file simply starts all sagas that are needed in the whole application. Currently, we have only our own `usersSaga`.
+* Refactor `addUser` action creator to use [`createAsyncAction`](https://github.com/piotrwitek/typesafe-actions#createasyncaction). Request action should have type `UserWithoutId`, success should have type `User` and error `Error`.
+* Refactor `removeUser` action creator to use `createAsyncAction`. Request action should have type `UserId`, success should have same `UserId` and error `Error`.
+* Add async action `loadUsers` to load list of users from server. Request of type `void`, success `User[]`, error `Error`.
 
-* Create a saga (exported with `export default`) that runs `usersSaga` (hint: use `fork`)
+#### usersReducer
 
-### Index file
-Location: `src/index.js`
+Location: `src/modules/users/users-reducer.ts`
 
-Configure all necessary things for `redux-saga`.
+Use async actions
 
-* Create `sagaMiddleware` with a function [`createSagaMiddleware`](https://redux-saga.js.org/docs/api/) (default export from `redux-saga`)
+* Update state to add flag if users are loading
+* Update conditions to use *success* actions.
+* Update `addUser` success reduction to just add payload to end of array (no id injection)
+* Set `loading` field if `loadUsers.request` is dispatched
+* Clear `loading` field and set `users` if `loadUsers.success` is dispatched
+* Clear `loading` field and clear `users` if `loadUsers.failure` is dispatched
+
+### UsersSelectors
+
+Location: `src/modules/users/users-selectors.ts`
+
+* Create a selector called `isUsersLoading`
+  * This selector just returns the `isUsersLoading` array from the `state`
+
+#### UsersList component
+
+Location: `src/modules/users/components/users-list.tsx`
+
+Use async actions
+
+* Update `mapDispatchToProps` to use *request* actions
+* Update `mapStateToProps` and component props to use `isUsersLoading` selector
+* When users are loading return `Loading...` from component
+
+#### usersEpics
+
+Location: `src/modules/users/users-epics.ts`
+
+Use async actions
+
+* Create an epic to get list of users (consumes `loadUsers.request`), [fetches](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) data from `/users` endpoint, validates them (using validation function) and dispatch `loadUsers.success` on success validation, otherwise `loadUsers.error` with some error description.
+* Create an epic to get new data about user (consumes `addUser.request`), sends data to `/users` endpoint and uses id from server response to store user in state using `addUser.success` action, in case of error dispatch `addUser.error` with some error description.
+* Create an epic to remove user (consumes `removeUser.request`), sends data to `/users/:id` endpoint and on succes removes user from state using `removeUser.success` action, in case of error dispatch `removeUser.error` with some error description.
+* Export all epics combined with [`combineEpics`](https://redux-observable.js.org/docs/api/combineEpics.html)
+
+#### rootEpics
+
+Location: `src/modules/root/root-epics.ts`
+
+Combine modules epics
+
+* Export combined epics, using `usersEpics`.
+
+#### Index file
+
+Location: `src/index.tsx`
+
+Configure all necessary things for `redux-observable`.
+
+* Create `epicMiddleware` with function [`createEpicMiddleware`](https://redux-observable.js.org/docs/api/createEpicMiddleware.html)
 * Change the second argument of `createStore` into the following where both functions ([`compose`](https://redux.js.org/api-reference/compose) and [`applyMiddleware`](https://redux.js.org/api-reference/applymiddleware) are imported from `redux`)
-  ```js
+
+  ```ts
   compose(
-    applyMiddleware(sagaMiddleware),
+    applyMiddleware(epicMiddleware),
     window.__REDUX_DEVTOOLS_EXTENSION__
       ? window.__REDUX_DEVTOOLS_EXTENSION__()
       : v => v
   )
   ```
-* Run your root saga with `sagaMiddleware.run(rootSaga)`
 
+* Run epic after router starts and dispatch `loadUsers` action.
 
+<!---
 ## Exercise \#7
 The main purpose of this exercise is to try [`normalizr`](https://github.com/paularmstrong/normalizr).
 

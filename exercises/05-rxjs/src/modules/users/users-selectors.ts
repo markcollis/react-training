@@ -14,6 +14,11 @@ export const getUsers = createSelector(
   (state) => state.users,
 )
 
+export const isUsersLoading = createSelector(
+  getState,
+  (state) => state.loading
+)
+
 export const getUsersList = createSelector(
   getUsers,
   (users) => users.map(user => ({ ...user, lastName: user.lastName.toLocaleUpperCase() })),
