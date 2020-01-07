@@ -8,7 +8,7 @@ export class UsersList extends Component {
         };
     }
 
-    handleClick = ({ firstName, lastName }) => {
+    handleClick({ firstName, lastName }) {
         this.setState(prevState => ({
             users: [...prevState.users, {
                 id: prevState.users.length + 1,
@@ -18,16 +18,18 @@ export class UsersList extends Component {
         }));
     }
 
-    renderButton = ({ firstName, lastName }) => (
+    renderButton({ firstName, lastName }) {
+        return (
         <button
             className="button"
             onClick={() => this.handleClick({ firstName, lastName })}
         >
             {`${firstName} ${lastName}`}
         </button>
-    )
+        );
+    }
 
-    renderUserList = () => {
+    renderUserList() {
         const { users } = this.state;
         if (users.length === 0) return <p>No Users</p>;
         const renderUsers = users.map(({ id, firstName, lastName}) => (
