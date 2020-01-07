@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const UsersList = ({ users, addUser }) => (
+export const UsersList = ({ users, addUser }) => (
   <div>
     <div>
       <button onClick={() => addUser({ firstName: 'Arya', lastName: 'Stark' })}>Add No One</button>
@@ -41,5 +41,3 @@ UsersList.propTypes = {
   ).isRequired,
   addUser: PropTypes.func.isRequired
 };
-
-export default UsersList;
