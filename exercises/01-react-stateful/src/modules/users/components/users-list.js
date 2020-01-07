@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const UsersList = ({ users, addUser }) => {
+export const UsersList = ({ users, addUser }) => {
   return (
     <div>
       <div>
@@ -44,5 +44,3 @@ UsersList.propTypes = {
 UsersList.defaultProps = {
   users: [],
 };
-
-export default UsersList;

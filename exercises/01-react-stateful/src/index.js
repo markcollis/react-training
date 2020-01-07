@@ -3,7 +3,7 @@ import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Root from 'modules/root/components/root';
+import { Root } from 'modules/root/components/root';
 
 let state = {
   title: 'User Management Exercise #2',
