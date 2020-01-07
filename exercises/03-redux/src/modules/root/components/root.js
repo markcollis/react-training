@@ -1,20 +1,13 @@
 import React from 'react';
 
 import UsersList from 'modules/users/components/users-list';
-
 import Header from './header';
 
-const Root = ({ title, users, addUser }) => (
+const Root = () => (
   <div>
-    <Header title={title} />
-    <UsersList users={users} addUser={addUser} />
+    <Header />
+    <UsersList />
   </div>
 );
-
-Root.propTypes = {
-  title: Header.propTypes.title,
-  users: UsersList.propTypes.users,
-  addUser: UsersList.propTypes.addUser
-};
 
 export default Root;

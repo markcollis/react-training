@@ -4,11 +4,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { createStore } from 'redux';
+import { Provider } from 'react-redux';
 
 import Root from 'modules/root/components/root';
 import rootReducer from 'modules/root/root-reducer';
-
-import UsersActions from 'modules/users/users-actions';
 
 const store = createStore(
   rootReducer,
@@ -17,17 +16,9 @@ const store = createStore(
     : v => v
 );
 
-const dispatchAddUser = user => store.dispatch(UsersActions.Creators.addUser(user));
-
-const render = ({ users: { title, users } }) => ReactDOM.render(
-  <Root
-    title={title}
-    users={users}
-    addUser={dispatchAddUser}
-  />,
+ReactDOM.render(
+  <Provider store={store}>
+    <Root />
+  </Provider>,
   document.getElementById('root')
 );
-
-store.subscribe(() => render(store.getState()));
-
-render(store.getState());
