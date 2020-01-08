@@ -1,9 +1,9 @@
 import * as React from 'react';
-// import * as PropTypes from 'prop-types';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { RootState } from '../../root/root-reducer';
 import UsersActions from '../users-actions';
+import { getUsersList } from '../user-selectors';
 
 type UsersListProps = ConnectedProps<typeof connector>
 const UsersList = ({ users, addUser }: UsersListProps) => (
@@ -37,7 +37,7 @@ const UsersList = ({ users, addUser }: UsersListProps) => (
 );
 
 const mapStateToProps = (state: RootState) => ({
-  users: state.users.users
+  users: getUsersList(state),
 });
 
 const mapDispatchToProps = {

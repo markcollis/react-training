@@ -2,7 +2,7 @@ import { createReducer, Handlers } from 'reduxsauce';
 
 import UsersActions from './users-actions';
 
-type UserState = {
+export type UserState = {
   title: string,
   users: Array<{
     id: number,
@@ -11,7 +11,7 @@ type UserState = {
   }>
 }
 
-type AddUserAction = {
+export type AddUserAction = {
   type: typeof UsersActions.Types.ADD_USER,
   user: {
     firstName: string,
