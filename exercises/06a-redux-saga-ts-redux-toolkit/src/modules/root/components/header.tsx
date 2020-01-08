@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { RootState } from '../root-reducer';
 
-import { getTitle } from '../../users/user-selectors';
+import { getTitle } from '../../users/users-selectors';
 
 type HeaderProps = ConnectedProps<typeof connector>;
 const HeaderInner = ({ title }: HeaderProps) => <h1>{title}</h1>;

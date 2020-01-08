@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { RootState } from '../../root/root-reducer';
 import { addUser } from '../users-slice';
-import { getUsersList } from '../user-selectors';
+import { getUsersList } from '../users-selectors';
 
 type UsersListProps = ConnectedProps<typeof connector>
 const UsersListInner = ({ users, addUser }: UsersListProps) => (
