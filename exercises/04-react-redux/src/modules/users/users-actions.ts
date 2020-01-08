@@ -1,8 +1,10 @@
 import { createActions } from 'reduxsauce';
 
-export default createActions(
+const actions = createActions(
   {
     addUser: ['user']
   },
   { prefix: 'users/' }
 );
+
+export default actions;
